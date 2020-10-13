@@ -18,7 +18,6 @@ case class ComponentsHolder(userDao: UserDao, tokenDao: TokenDao, authService: A
 
 object ComponentsHolder {
 
-// postgres://uzdkyfpsqdzqnq:670e9cfd04c5b1b7c582cc0afdc783b2b9cb7573bf9db87bb0dcd083af91bb4f@ec2-52-30-161-203.eu-west-1.compute.amazonaws.com:5432/d52mt3dhvtecn5
   def getDb: Database = {
     if (EnvUtils.isTesting) {
       Database.forConfig("db")
