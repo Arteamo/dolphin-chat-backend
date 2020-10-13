@@ -4,6 +4,7 @@ import akka.actor.ActorSystem
 import com.dolphin.components.auth.AuthService
 import com.dolphin.components.chat.ChatService
 import com.dolphin.db.dao.{TokenDao, TokenDaoImpl, UserDao, UserDaoImpl}
+import com.dolphin.utils.EnvUtils
 import slick.jdbc.JdbcBackend.Database
 
 import scala.concurrent.ExecutionContext
@@ -17,7 +18,10 @@ case class ComponentsHolder(userDao: UserDao, tokenDao: TokenDao, authService: A
 object ComponentsHolder {
 
   def create(system: ActorSystem)(implicit ec: ExecutionContext): ComponentsHolder = {
-    val db = Database.forConfig("db")
+    val db = if (EnvUtils.isTesting) {
+      Database.forConfig("db")
+    } else Database.forURL(sys.env("DATABASE_URL"))
+
     val userDao = new UserDaoImpl(db)
     val tokenDao = new TokenDaoImpl(db)
     ComponentsHolder(
