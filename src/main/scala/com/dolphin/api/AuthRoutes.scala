@@ -13,7 +13,9 @@ trait AuthRoutes extends CommonDirectives {
   this: Components =>
 
   val registerRoute: Route = {
-    (pathPrefix("register") & post & entity(as[UserJson])) { user => complete(components.authService.createUser(user)) }
+    (pathPrefix("register") & post & entity(as[UserJson])) { user =>
+      checkUser(user) { complete(components.authService.createUser(user)) }
+    }
   }
 
   val authRoute: Route = {

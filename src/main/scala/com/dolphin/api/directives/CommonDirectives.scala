@@ -2,7 +2,7 @@ package com.dolphin.api.directives
 
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.directives.Credentials
-import akka.http.scaladsl.server.{AuthorizationFailedRejection, Directive1}
+import akka.http.scaladsl.server.{AuthorizationFailedRejection, Directive0, Directive1, ValidationRejection}
 import com.dolphin.api.entity.UserJson
 import com.dolphin.components.Components
 import com.dolphin.db.entity.{Token, User}
@@ -17,7 +17,7 @@ trait CommonDirectives extends Logging {
   def authUser(userJson: UserJson): Directive1[Token] = {
     onComplete(components.authService.getUserByCredentials(userJson)).flatMap {
       case Success(Some(u)) => provideToken(u)
-      case Success(None) => reject(AuthorizationFailedRejection) // TODO: Change rejection
+      case Success(None) => reject(AuthorizationFailedRejection)
       case Failure(e) =>
         log.error("Error occurred during auth", e)
         reject(AuthorizationFailedRejection)
@@ -32,6 +32,13 @@ trait CommonDirectives extends Logging {
       case _ =>
         log.info(s"No token")
         Future.successful(None)
+    }
+  }
+
+  def checkUser(userJson: UserJson): Directive0 = {
+    onSuccess(components.authService.getUserByCredentials(userJson)).flatMap {
+      case Some(_) => reject(ValidationRejection("User exists"))
+      case None => pass
     }
   }
 
