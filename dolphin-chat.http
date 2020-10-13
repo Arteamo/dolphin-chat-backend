@@ -15,3 +15,14 @@ Content-Type: application/json
   "login": "test1",
   "password": "qwerty"
 }
+
+###
+
+POST https://dolphin-chat-backend.herokuapp.com/register
+Content-Type: application/json
+
+{
+  "login": "test1",
+  "email": "email@test.ru",
+  "password": "qwerty"
+}
