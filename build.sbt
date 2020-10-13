@@ -29,3 +29,5 @@ libraryDependencies ++= {
     "com.github.swagger-akka-http" %% "swagger-akka-http" % swaggerVersion
   )
 }
+
+enablePlugins(JavaAppPackaging)
