@@ -2,7 +2,7 @@ POST http://0.0.0.0:9000/register
 Content-Type: application/json
 
 {
-  "login": "test1",
+  "username": "test1",
   "email": "email@test.ru",
   "password": "qwerty"
 }
@@ -12,17 +12,6 @@ POST http://localhost:9000/auth
 Content-Type: application/json
 
 {
-  "login": "test1",
-  "password": "qwerty"
-}
-
-###
-
-POST https://dolphin-chat-backend.herokuapp.com/register
-Content-Type: application/json
-
-{
-  "login": "test1",
   "email": "email@test.ru",
   "password": "qwerty"
 }
