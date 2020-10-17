@@ -12,15 +12,15 @@ class AuthService(userDao: UserDao, tokenDao: TokenDao)(implicit ec: ExecutionCo
   def createUser(userJson: UserJson): Future[String] = {
     userDao.create(
       User(
-        login = userJson.login,
-        email = userJson.email.getOrElse(throw new RuntimeException("Can't create user without email")),
+        username = userJson.username.getOrElse(throw new RuntimeException("Can't create user without name")),
+        email = userJson.email,
         passwordHash = hashForPassword(userJson)
       )
     )
   }.map(_ => "OK")
 
   def getUserByCredentials(userJson: UserJson): Future[Option[User]] = {
-    userDao.getByLogin(userJson.login).map {
+    userDao.getByEmail(userJson.email).map {
       case user @ _ => user.filter(_.passwordHash == hashForPassword(userJson))
     }
   }

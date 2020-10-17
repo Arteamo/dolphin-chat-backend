@@ -11,7 +11,7 @@ import scala.concurrent.{ExecutionContext, Future}
 trait UserDao {
   def create(user: User): Future[Int]
 
-  def getByLogin(login: String): Future[Option[User]]
+  def getByEmail(email: String): Future[Option[User]]
 
   def getByToken(token: String): Future[Option[User]]
 }
@@ -23,8 +23,8 @@ class UserDaoImpl(db: Database)(implicit ec: ExecutionContext) extends UserDao {
     db.run(query.transactionally)
   }
 
-  override def getByLogin(login: String): Future[Option[User]] = {
-    val query = UserTable.filter(_.login === login)
+  override def getByEmail(email: String): Future[Option[User]] = {
+    val query = UserTable.filter(_.email === email)
     db.run(query.result.headOption)
   }
 

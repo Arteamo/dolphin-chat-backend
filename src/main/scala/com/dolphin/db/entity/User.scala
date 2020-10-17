@@ -7,7 +7,7 @@ import slick.lifted.{ProvenShape, TableQuery, Tag}
 
 case class User(
   id: Option[Int] = None,
-  login: String,
+  username: String,
   passwordHash: String,
   email: String,
   createdTimestamp: Timestamp = new Timestamp(System.currentTimeMillis())
@@ -16,11 +16,11 @@ case class User(
 class UserTable(tag: Tag) extends Table[User](tag, "users") {
 
   override def * : ProvenShape[User] =
-    (id.?, login, passwordHash, email, createdTimestamp) <> (User.tupled, User.unapply)
+    (id.?, username, passwordHash, email, createdTimestamp) <> (User.tupled, User.unapply)
 
   def id: Rep[Int] = column[Int]("id", O.PrimaryKey, O.AutoInc)
 
-  def login: Rep[String] = column[String]("login")
+  def username: Rep[String] = column[String]("username", O.Unique)
 
   def passwordHash: Rep[String] = column[String]("password_hash")
 
