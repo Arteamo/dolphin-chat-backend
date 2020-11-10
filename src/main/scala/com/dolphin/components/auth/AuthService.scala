@@ -36,6 +36,10 @@ class AuthService(userDao: UserDao, tokenDao: TokenDao)(implicit ec: ExecutionCo
     }
   }
 
+  def logout(userId: Int): Future[(String, Int)] = {
+    tokenDao.deleteByUserId(userId).map("status" -> _)
+  }
+
   private def hashForPassword(userJson: UserJson): String = {
     MurmurHash3.stringHash(userJson.password).toString
   }
