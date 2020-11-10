@@ -13,6 +13,8 @@ trait TokenDao {
   def getByUserId(userId: Int): Future[Option[Token]]
 
   def createToken(userId: Int): Future[Token]
+
+  def deleteByUserId(userId: Int): Future[Int]
 }
 
 class TokenDaoImpl(db: Database)(implicit ec: ExecutionContext) extends TokenDao {
@@ -26,6 +28,11 @@ class TokenDaoImpl(db: Database)(implicit ec: ExecutionContext) extends TokenDao
     val query = (TokenTable returning TokenTable.map(_.token)) into ((token, tokenValue) =>
       token.copy(token = tokenValue)
     ) += Token(UUID.randomUUID().toString, userId)
+    db.run(query.transactionally)
+  }
+
+  override def deleteByUserId(userId: Int): Future[Int] = {
+    val query = TokenTable.filter(_.userId === userId).delete
     db.run(query.transactionally)
   }
 }
