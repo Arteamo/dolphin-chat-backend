@@ -44,11 +44,11 @@ trait CommonDirectives extends Logging {
 
   private def provideToken(user: User): Directive1[Token] = {
     user.id
-        .map { id =>
-          onSuccess(components.authService.getUserToken(id))
-              .flatMap(token => provide(token))
-        }
-        .getOrElse(reject(AuthorizationFailedRejection))
+      .map { id =>
+        onSuccess(components.authService.getUserToken(id))
+          .flatMap(token => provide(token))
+      }
+      .getOrElse(reject(AuthorizationFailedRejection))
 
   }
 }
