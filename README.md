@@ -10,3 +10,9 @@ API: `dolphin-chat-backend.herokuapp.com`
 * Akka-HTTP
 * Circe
 * Swagger
+
+### Routes
+* `POST /register`
+* `POST /auth`
+* `POST /logout`
+* `Websocket /ws/chats/{roomId}`
