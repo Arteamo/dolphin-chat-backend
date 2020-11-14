@@ -1,10 +1,8 @@
 package com.dolphin.components
 
 import akka.actor.ActorSystem
-import akka.stream.Materializer
 import com.dolphin.components.auth.AuthService
-import com.dolphin.components.chat.ChatRoom
-import com.dolphin.db.dao.{TokenDao, TokenDaoImpl, UserDao, UserDaoImpl}
+import com.dolphin.db.dao._
 import com.dolphin.utils.EnvUtils
 import org.postgresql.Driver
 import slick.jdbc.JdbcBackend.Database
@@ -15,7 +13,7 @@ trait Components {
   def components: ComponentsHolder
 }
 
-case class ComponentsHolder(actorSystem: ActorSystem, userDao: UserDao, tokenDao: TokenDao, authService: AuthService)
+case class ComponentsHolder(actorSystem: ActorSystem, userDao: UserDao, tokenDao: TokenDao, roomDao: RoomDao, authService: AuthService)
 
 object ComponentsHolder {
 
@@ -36,10 +34,12 @@ object ComponentsHolder {
     val db = getDb
     val userDao = new UserDaoImpl(db)
     val tokenDao = new TokenDaoImpl(db)
+    val roomDao = new RoomDaoImpl(db)
     ComponentsHolder(
       system,
       userDao,
       tokenDao,
+      roomDao,
       new AuthService(userDao, tokenDao),
     )
   }

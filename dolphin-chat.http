@@ -15,3 +15,25 @@ Content-Type: application/json
   "email": "email@test.ru",
   "password": "qwerty"
 }
+
+###
+
+POST http://localhost:9000/logout
+
+###
+
+POST http://localhost:9000/chats/create
+Content-Type: application/json
+
+{
+  "title": "SomeRoom2",
+  "encodedImage": "base64 string"
+}
+
+###
+
+GET http://localhost:9000/chats/list
+
+###
+
+GET http://localhost:9000/chats/find/1
