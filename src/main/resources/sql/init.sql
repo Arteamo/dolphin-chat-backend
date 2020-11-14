@@ -12,3 +12,10 @@ create table tokens
     token   varchar(36) primary key,
     user_id serial references users (id) unique
 );
+
+create table rooms
+(
+    id            serial primary key not null,
+    title         text               not null,
+    encoded_image text default null
+)

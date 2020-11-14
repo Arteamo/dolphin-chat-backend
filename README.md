@@ -15,4 +15,7 @@ API: `dolphin-chat-backend.herokuapp.com`
 * `POST /register`
 * `POST /auth`
 * `POST /logout`
+* `POST /chats/create`
+* `GET /chats/list`
+* `GET /chats/find/{roomId}`
 * `Websocket /ws/chats/{roomId}`
