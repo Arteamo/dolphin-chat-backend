@@ -14,8 +14,8 @@ trait ChatRoutes extends CommonDirectives {
   private implicit lazy val actorSystem: ActorSystem = components.actorSystem
 
   private val chatWebsocketRoute: Route = {
-    (path("ws" / "chats" / IntNumber) & get & parameter("name")) { (id, name) =>
-      handleWebSocketMessages(ChatRoom.findOrCreate(id).websocketFlow(name))
+    (path("ws" / "chats" / IntNumber) & get & authenticateOAuth2Async("dolphin", oauthUser)) { (id, user) =>
+      handleWebSocketMessages(ChatRoom.findOrCreate(id).websocketFlow(user.username))
     }
   }
 
