@@ -28,5 +28,5 @@ trait AuthRoutes extends CommonDirectives {
     }
   }
 
-  val authRoutes: Route = registerRoute ~ authRoute
+  val authRoutes: Route = registerRoute ~ authRoute ~ logoutRoute
 }
