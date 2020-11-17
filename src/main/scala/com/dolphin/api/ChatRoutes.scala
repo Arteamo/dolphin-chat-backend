@@ -29,11 +29,14 @@ trait ChatRoutes extends CommonDirectives {
     }
   }
 
-  private val findRoomRoute: Route = {
-    (path("chats" / "find" / IntNumber) & get) { id =>
-      complete(components.roomDao.findById(id))
-    }
+  private val findRoomByIdRoute: Route = {
+    (path("chats" / "find" / IntNumber) & get) { id => complete(components.roomDao.findById(id)) }
   }
 
-  val chatRoutes: Route = chatWebsocketRoute ~ createRoomRoute ~ listRoomsRoute ~ findRoomRoute
+  private val findRoomByTitleRoute: Route = {
+    (path("chats" / "find") & get & parameter("title")) { title => complete(components.roomDao.findByTitle(title)) }
+  }
+
+  val chatRoutes: Route =
+    chatWebsocketRoute ~ createRoomRoute ~ listRoomsRoute ~ findRoomByIdRoute ~ findRoomByTitleRoute
 }

@@ -1,21 +1,25 @@
-## Dolphin Chat Backend
+## Dolphin Chat Backend [WIP]
 WebSocket chat api with oAuth2
 
 API: `dolphin-chat-backend.herokuapp.com`
+
+### iOS client
+https://github.com/Med1D/Dolphin
 
 ### Stack
 * Scala 2.13 and sbt
 * Postgres
 * Slick
-* Akka-HTTP
+* Akka
+* Akka-http
 * Circe
-* Swagger
 
 ### Routes
-* `POST /register`
-* `POST /auth`
-* `POST /logout`
-* `POST /chats/create`
-* `GET /chats/list`
-* `GET /chats/find/{roomId}`
-* `Websocket /ws/chats/{roomId}`
+* `POST /register` - create account
+* `POST /auth` - login
+* `POST /logout` - logout
+* `POST /chats/create` - create chat room
+* `GET /chats/list` - list all rooms
+* `GET /chats/find/{roomId}` - find room by id
+* `GET /chats/find?title={title}` - find room by title
+* `Websocket /ws/chats/{roomId}` - websocket for messaging

@@ -26,7 +26,7 @@ POST http://localhost:9000/chats/create
 Content-Type: application/json
 
 {
-  "title": "SomeRoom2",
+  "title": "room name",
   "encodedImage": "base64 string"
 }
 
@@ -37,3 +37,7 @@ GET http://localhost:9000/chats/list
 ###
 
 GET http://localhost:9000/chats/find/1
+
+###
+
+GET http://localhost:9000/chats/find?title=name
