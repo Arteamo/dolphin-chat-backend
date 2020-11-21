@@ -8,7 +8,7 @@ import com.dolphin.components.Components
 import com.dolphin.db.entity.{Token, User}
 import com.dolphin.utils.Logging
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 import scala.util.{Failure, Success}
 
 trait CommonDirectives extends Logging {
@@ -39,6 +39,20 @@ trait CommonDirectives extends Logging {
     onSuccess(components.authService.getUserByCredentials(userJson)).flatMap {
       case Some(_) => reject(ValidationRejection("User exists"))
       case None => pass
+    }
+  }
+
+  def extractUserId(user: User): Directive1[Int] = {
+    user.id match {
+      case Some(id) => provide(id)
+      case None => reject(AuthorizationFailedRejection)
+    }
+  }
+
+  def getUserByToken(token: String): Directive1[User] = {
+    onSuccess(components.tokenDao.getUserByToken(token)).flatMap {
+      case Some(user) => provide(user)
+      case None => reject(AuthorizationFailedRejection)
     }
   }
 

@@ -1,21 +1,23 @@
 package com.dolphin.api
 
-import akka.actor.ActorSystem
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.Route
 import com.dolphin.api.directives.CommonDirectives
-import com.dolphin.components.Components
 import com.dolphin.components.chat.ChatRoom
+import com.dolphin.components.{Components, ComponentsHolder}
 import com.dolphin.db.entity.Room
+import com.dolphin.utils.Logging
 import de.heikoseeberger.akkahttpcirce.FailFastCirceSupport.{marshaller, unmarshaller}
 
-trait ChatRoutes extends CommonDirectives {
+trait ChatRoutes extends CommonDirectives with Logging {
   this: Components =>
-  private implicit lazy val actorSystem: ActorSystem = components.actorSystem
+  private implicit lazy val componentsHolder: ComponentsHolder = components
 
   private val chatWebsocketRoute: Route = {
-    (path("ws" / "chats" / IntNumber) & get & authenticateOAuth2Async("dolphin", oauthUser)) { (id, user) =>
-      handleWebSocketMessages(ChatRoom.findOrCreate(id).websocketFlow(user.username))
+    (path("ws" / "chats" / IntNumber) & get & parameter("access_token")) { (roomId, token) =>
+      getUserByToken(token) { user =>
+        extractUserId(user) { userId => handleWebSocketMessages(ChatRoom.findOrCreate(roomId).websocketFlow(userId)) }
+      }
     }
   }
 

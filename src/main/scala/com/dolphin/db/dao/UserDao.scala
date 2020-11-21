@@ -14,6 +14,8 @@ trait UserDao {
   def getByEmail(email: String): Future[Option[User]]
 
   def getByToken(token: String): Future[Option[User]]
+
+  def getUserById(id: Int): Future[Option[User]]
 }
 
 class UserDaoImpl(db: Database)(implicit ec: ExecutionContext) extends UserDao {
@@ -32,5 +34,10 @@ class UserDaoImpl(db: Database)(implicit ec: ExecutionContext) extends UserDao {
     val query = (UserTable join TokenTable on (_.id === _.userId))
       .filter { case (ut, tt) => ut.id === tt.userId }
     db.run(query.result.headOption.transactionally).map(_.map(_._1))
+  }
+
+  override def getUserById(id: Int): Future[Option[User]] = {
+    val query = UserTable.filter(_.id === id)
+    db.run(query.result.headOption)
   }
 }

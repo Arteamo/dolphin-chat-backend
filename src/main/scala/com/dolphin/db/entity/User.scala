@@ -2,6 +2,7 @@ package com.dolphin.db.entity
 
 import java.sql.Timestamp
 
+import com.dolphin.api.entity.UserJsonResponse
 import slick.jdbc.PostgresProfile.api._
 import slick.lifted.{ProvenShape, TableQuery, Tag}
 
@@ -11,7 +12,9 @@ case class User(
   passwordHash: String,
   email: String,
   createdTimestamp: Timestamp = new Timestamp(System.currentTimeMillis())
-)
+) {
+  def toResponse: UserJsonResponse = UserJsonResponse(username, email)
+}
 
 class UserTable(tag: Tag) extends Table[User](tag, "users") {
 

@@ -2,8 +2,8 @@ POST http://0.0.0.0:9000/register
 Content-Type: application/json
 
 {
-  "username": "test1",
-  "email": "email@test.ru",
+  "username": "newTest",
+  "email": "email200@test.ru",
   "password": "qwerty"
 }
 
@@ -19,11 +19,13 @@ Content-Type: application/json
 ###
 
 POST http://localhost:9000/logout
+Authorization: Bearer ea11f4a7-c906-438a-b444-61dbab08927f
 
 ###
 
 POST http://localhost:9000/chats/create
 Content-Type: application/json
+Authorization: Bearer ea11f4a7-c906-438a-b444-61dbab08927f
 
 {
   "title": "room name",
@@ -41,3 +43,21 @@ GET http://localhost:9000/chats/find/1
 ###
 
 GET http://localhost:9000/chats/find?title=name
+
+###
+
+GET http://localhost:9000/rooms/list
+Authorization: Bearer 457370b2-2320-45c6-94af-99df3b9d452c
+
+###
+PUT http://localhost:9000/rooms/join/5
+Authorization: Bearer 457370b2-2320-45c6-94af-99df3b9d452c
+
+###
+PUT http://localhost:9000/rooms/leave/5
+Authorization: Bearer 457370b2-2320-45c6-94af-99df3b9d452c
+
+###
+
+GET http://localhost:9000/rooms/list/users/5
+Authorization: Bearer 457370b2-2320-45c6-94af-99df3b9d452c

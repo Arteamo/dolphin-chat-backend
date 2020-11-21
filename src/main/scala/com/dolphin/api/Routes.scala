@@ -4,8 +4,8 @@ import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.Route
 import com.dolphin.components.Components
 
-trait Routes extends AuthRoutes with ChatRoutes {
+trait Routes extends AuthRoutes with ChatRoutes with RoomRoutes {
   this: Components =>
 
-  def routes: Route = authRoutes ~ chatRoutes
+  def routes: Route = authRoutes ~ chatRoutes ~ roomRoutes
 }
