@@ -2,8 +2,9 @@ package com.dolphin.db.dao
 
 import java.util.UUID
 
-import com.dolphin.db.entity.Token
+import com.dolphin.db.entity.{Token, User}
 import com.dolphin.db.entity.TokenTable.TokenTable
+import com.dolphin.db.entity.UserTable.UserTable
 import slick.jdbc.JdbcBackend.Database
 import slick.jdbc.PostgresProfile.api._
 
@@ -15,6 +16,8 @@ trait TokenDao {
   def createToken(userId: Int): Future[Token]
 
   def deleteByUserId(userId: Int): Future[Int]
+
+  def getUserByToken(token: String): Future[Option[User]]
 }
 
 class TokenDaoImpl(db: Database)(implicit ec: ExecutionContext) extends TokenDao {
@@ -34,5 +37,10 @@ class TokenDaoImpl(db: Database)(implicit ec: ExecutionContext) extends TokenDao
   override def deleteByUserId(userId: Int): Future[Int] = {
     val query = TokenTable.filter(_.userId === userId).delete
     db.run(query.transactionally)
+  }
+
+  override def getUserByToken(token: String): Future[Option[User]] = {
+    val query = TokenTable.filter(_.token === token) joinLeft UserTable on(_.userId === _.id)
+    db.run(query.result.headOption).map(_.flatMap(_._2))
   }
 }

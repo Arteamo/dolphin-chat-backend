@@ -24,7 +24,9 @@ trait AuthRoutes extends CommonDirectives {
 
   val logoutRoute: Route = {
     (pathPrefix("logout") & post & authenticateOAuth2Async("dolphin", oauthUser)) { user =>
-      complete(user.id.map(components.authService.logout))
+      extractUserId(user) { userId =>
+        complete(components.authService.logout(userId))
+      }
     }
   }
 

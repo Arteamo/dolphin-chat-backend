@@ -1,7 +1,5 @@
 package com.dolphin.db.entity
 
-import java.sql.Timestamp
-
 import io.circe.generic.semiauto.{deriveDecoder, deriveEncoder}
 import io.circe.{Decoder, Encoder}
 import slick.jdbc.PostgresProfile.api._

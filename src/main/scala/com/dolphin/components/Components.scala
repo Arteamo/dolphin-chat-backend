@@ -2,6 +2,7 @@ package com.dolphin.components
 
 import akka.actor.ActorSystem
 import com.dolphin.components.auth.AuthService
+import com.dolphin.components.room.RoomService
 import com.dolphin.db.dao._
 import com.dolphin.utils.EnvUtils
 import org.postgresql.Driver
@@ -13,7 +14,16 @@ trait Components {
   def components: ComponentsHolder
 }
 
-case class ComponentsHolder(actorSystem: ActorSystem, userDao: UserDao, tokenDao: TokenDao, roomDao: RoomDao, authService: AuthService)
+case class ComponentsHolder(
+  actorSystem: ActorSystem,
+  userDao: UserDao,
+  tokenDao: TokenDao,
+  roomDao: RoomDao,
+  messageDao: MessageDao,
+  userToRoomDao: UserToRoomDao,
+  authService: AuthService,
+  roomService: RoomService
+)
 
 object ComponentsHolder {
 
@@ -35,12 +45,17 @@ object ComponentsHolder {
     val userDao = new UserDaoImpl(db)
     val tokenDao = new TokenDaoImpl(db)
     val roomDao = new RoomDaoImpl(db)
+    val messageDao = new MessageDaoImpl(db)
+    val userToRoomDao = new UserToRoomDaoImpl(db)
     ComponentsHolder(
       system,
       userDao,
       tokenDao,
       roomDao,
+      messageDao,
+      userToRoomDao,
       new AuthService(userDao, tokenDao),
+      new RoomService(userToRoomDao, messageDao)
     )
   }
 
