@@ -14,7 +14,7 @@ case class User(
   createdTimestamp: Timestamp = new Timestamp(System.currentTimeMillis()),
   encodedImage: Option[String] = None
 ) {
-  def toResponse: UserJsonResponse = UserJsonResponse(username, email)
+  def toResponse: UserJsonResponse = UserJsonResponse(id, username, email, encodedImage)
 }
 
 class UserTable(tag: Tag) extends Table[User](tag, "users") {

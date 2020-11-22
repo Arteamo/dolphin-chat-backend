@@ -25,9 +25,8 @@ class RoomService(userToRoomDao: UserToRoomDao, messageDao: MessageDao)(
       room,
       message.map { msg =>
         LastMessageJson(
-          msg.messageText,
-          msg.messageType,
-          author.map(_.username)
+          msg.toMessageJson,
+          author.map(_.toResponse)
         )
       }
     )

@@ -3,7 +3,7 @@ package com.dolphin.api.entity
 import io.circe.generic.semiauto.{deriveDecoder, deriveEncoder}
 import io.circe.{Decoder, Encoder}
 
-case class LastMessageJson(text: String, messageType: String, authorName: Option[String])
+case class LastMessageJson(message: MessageJson, sender: Option[UserJsonResponse] = None)
 
 object LastMessageJson {
   implicit val lastMessageEncoder: Encoder[LastMessageJson] = deriveEncoder[LastMessageJson]

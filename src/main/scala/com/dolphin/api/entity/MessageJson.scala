@@ -6,7 +6,12 @@ import com.dolphin.db.entity.Message
 import io.circe.{Decoder, Encoder}
 import io.circe.generic.semiauto.{deriveDecoder, deriveEncoder}
 
-final case class MessageJson(text: String, messageType: String, sendTimestamp: Long) {
+final case class MessageJson(
+  text: String,
+  messageType: String,
+  sendTimestamp: Long,
+  encodedData: Option[String] = None
+) {
 
   def toMessage(senderId: Int, roomId: Int): Message = {
     Message(
@@ -14,7 +19,8 @@ final case class MessageJson(text: String, messageType: String, sendTimestamp: L
       messageType = messageType,
       sendTimestamp = new Timestamp(sendTimestamp),
       senderId = senderId,
-      roomId = roomId
+      roomId = roomId,
+      encodedData = encodedData
     )
   }
 }

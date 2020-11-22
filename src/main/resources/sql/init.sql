@@ -50,3 +50,7 @@ create index room_id_idx_utr on users_to_rooms (room_id);
 
 alter table users
     add column encoded_image text null;
+
+
+alter table messages
+    add column encoded_data text null;
