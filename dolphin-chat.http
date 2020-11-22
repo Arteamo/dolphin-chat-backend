@@ -71,3 +71,16 @@ Authorization: Bearer 457370b2-2320-45c6-94af-99df3b9d452c
 {
   "encodedImage": "base64 string"
 }
+###
+
+POST http://localhost:9000/rooms/image/5
+Content-Type: application/json
+Authorization: Bearer 457370b2-2320-45c6-94af-99df3b9d452c
+
+{
+  "encodedImage": "base64 string"
+}
+
+###
+
+GET http://localhost:9000/user/1

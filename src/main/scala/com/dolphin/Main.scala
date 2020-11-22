@@ -11,7 +11,7 @@ import scala.concurrent.ExecutionContextExecutor
 
 object Main extends App with Components with Routes with Logging {
   implicit lazy val system: ActorSystem = ActorSystem()
-  implicit lazy val executionContext: ExecutionContextExecutor = system.dispatcher
+  override implicit lazy val ec: ExecutionContextExecutor = system.dispatcher
 
   val config = ConfigFactory.load()
   val host = config.getString("http.host")

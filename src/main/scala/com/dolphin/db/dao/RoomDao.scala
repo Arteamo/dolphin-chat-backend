@@ -15,6 +15,8 @@ trait RoomDao {
   def findByTitle(title: String): Future[Seq[Room]]
 
   def list(): Future[Seq[Room]]
+
+  def updateRoomImage(roomId: Int, encodedImage: String): Future[Int]
 }
 
 class RoomDaoImpl(db: Database)(implicit ec: ExecutionContext) extends RoomDao {
@@ -36,5 +38,10 @@ class RoomDaoImpl(db: Database)(implicit ec: ExecutionContext) extends RoomDao {
 
   override def list(): Future[Seq[Room]] = {
     db.run(RoomTable.result)
+  }
+
+  override def updateRoomImage(roomId: Int, encodedImage: String): Future[Int] = {
+    val query = RoomTable.filter(_.id === roomId).map(_.encodedImage).update(encodedImage)
+    db.run(query.transactionally)
   }
 }

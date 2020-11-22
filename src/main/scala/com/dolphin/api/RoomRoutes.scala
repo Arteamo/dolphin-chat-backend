@@ -3,6 +3,7 @@ package com.dolphin.api
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.Route
 import com.dolphin.api.directives.CommonDirectives
+import com.dolphin.api.entity.ImageUpdate
 import com.dolphin.api.entity.RoomJson._
 import com.dolphin.components.Components
 import com.dolphin.db.entity.UserToRoom._
@@ -35,5 +36,11 @@ trait RoomRoutes extends CommonDirectives {
     }
   }
 
-  val roomRoutes: Route = listUserRoomsRoute ~ listUsersInRoomRoute ~ joinRoomRoute ~ leaveRoomRoute
+  private val updateRoomImage: Route = {
+    (path("rooms" / "image" / IntNumber) & post & entity(as[ImageUpdate])) { (roomId, imageUpdate) =>
+      complete(components.roomDao.updateRoomImage(roomId, imageUpdate.encodedImage))
+    }
+  }
+
+  val roomRoutes: Route = listUserRoomsRoute ~ listUsersInRoomRoute ~ joinRoomRoute ~ leaveRoomRoute ~ updateRoomImage
 }
