@@ -41,7 +41,7 @@ class UserToRoomDaoImpl(db: Database)(implicit ec: ExecutionContext) extends Use
 
   override def listUsersByRoomId(roomId: Int): Future[Seq[UserJsonResponse]] = {
     val query = UserToRoomTable joinLeft UserTable on (_.userId === _.id) joinLeft RoomTable on (_._1.roomId === _.id)
-    db.run(query.result).map(_.flatMap(_._1._2.map(_.toResponse)))
+    db.run(query.result).map(_.flatMap(_._1._2.map(_.toResponse)).distinct)
 
   }
 }

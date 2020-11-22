@@ -34,7 +34,7 @@ class UserDaoImpl(db: Database)(implicit ec: ExecutionContext) extends UserDao {
 
   override def getByToken(token: String): Future[Option[User]] = {
     val query = (UserTable join TokenTable on (_.id === _.userId))
-      .filter { case (ut, tt) => ut.id === tt.userId }
+      .filter { case (ut, tt) => tt.token === token }
     db.run(query.result.headOption.transactionally).map(_.map(_._1))
   }
 
