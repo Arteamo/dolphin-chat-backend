@@ -6,7 +6,6 @@ import com.dolphin.api.directives.CommonDirectives
 import com.dolphin.api.entity.UserJson
 import com.dolphin.api.entity.UserJson._
 import com.dolphin.components.Components
-import com.dolphin.db.entity.Token._
 import de.heikoseeberger.akkahttpcirce.FailFastCirceSupport._
 
 trait AuthRoutes extends CommonDirectives {
@@ -24,9 +23,7 @@ trait AuthRoutes extends CommonDirectives {
 
   val logoutRoute: Route = {
     (pathPrefix("logout") & post & authenticateOAuth2Async("dolphin", oauthUser)) { user =>
-      extractUserId(user) { userId =>
-        complete(components.authService.logout(userId))
-      }
+      extractUserId(user) { userId => complete(components.authService.logout(userId)) }
     }
   }
 

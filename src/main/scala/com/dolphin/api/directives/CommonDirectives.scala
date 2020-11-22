@@ -3,20 +3,20 @@ package com.dolphin.api.directives
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.directives.Credentials
 import akka.http.scaladsl.server.{AuthorizationFailedRejection, Directive0, Directive1, ValidationRejection}
-import com.dolphin.api.entity.UserJson
+import com.dolphin.api.entity.{AuthResponse, UserJson}
 import com.dolphin.components.Components
-import com.dolphin.db.entity.{Token, User}
+import com.dolphin.db.entity.User
 import com.dolphin.utils.Logging
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.Future
 import scala.util.{Failure, Success}
 
 trait CommonDirectives extends Logging {
   this: Components =>
 
-  def authUser(userJson: UserJson): Directive1[Token] = {
+  def authUser(userJson: UserJson): Directive1[AuthResponse] = {
     onComplete(components.authService.getUserByCredentials(userJson)).flatMap {
-      case Success(Some(u)) => provideToken(u)
+      case Success(Some(u)) => providerAuth(u)
       case Success(None) => reject(AuthorizationFailedRejection)
       case Failure(e) =>
         log.error("Error occurred during auth", e)
@@ -56,11 +56,11 @@ trait CommonDirectives extends Logging {
     }
   }
 
-  private def provideToken(user: User): Directive1[Token] = {
+  private def providerAuth(user: User): Directive1[AuthResponse] = {
     user.id
       .map { id =>
         onSuccess(components.authService.getUserToken(id))
-          .flatMap(token => provide(token))
+          .flatMap(token => provide(AuthResponse(token, user.toResponse)))
       }
       .getOrElse(reject(AuthorizationFailedRejection))
 
