@@ -48,5 +48,5 @@ create table users_to_rooms
 create index user_id_idx_utr on users_to_rooms (user_id);
 create index room_id_idx_utr on users_to_rooms (room_id);
 
-select *
-from messages;
+alter table users
+    add column encoded_image text null;
