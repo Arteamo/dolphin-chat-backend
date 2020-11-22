@@ -54,3 +54,5 @@ alter table users
 
 alter table messages
     add column encoded_data text null;
+
+select * from rooms;

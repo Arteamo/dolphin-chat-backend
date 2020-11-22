@@ -34,7 +34,7 @@ class UserDaoImpl(db: Database)(implicit ec: ExecutionContext) extends UserDao {
 
   override def getByToken(token: String): Future[Option[User]] = {
     val query = (UserTable join TokenTable on (_.id === _.userId))
-      .filter { case (ut, tt) => tt.token === token }
+      .filter { case (_, tt) => tt.token === token }
     db.run(query.result.headOption.transactionally).map(_.map(_._1))
   }
 
@@ -45,6 +45,6 @@ class UserDaoImpl(db: Database)(implicit ec: ExecutionContext) extends UserDao {
 
   override def updateUserImage(userId: Int, encodedImage: String): Future[Int] = {
     val query = UserTable.filter(_.id === userId).map(_.encodedImage).update(encodedImage)
-    db.run(query)
+    db.run(query.transactionally)
   }
 }

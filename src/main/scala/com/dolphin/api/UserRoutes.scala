@@ -13,11 +13,16 @@ trait UserRoutes extends CommonDirectives {
 
   private val changeImageRoute: Route = {
     (path("user" / "image") & post & authenticateOAuth2Async("dolphin", oauthUser) & entity(as[ImageUpdate])) {
-      (user, update) => extractUserId(user) { userId =>
-        complete(components.userDao.updateUserImage(userId, update.encodedImage))
-      }
+      (user, update) =>
+        extractUserId(user) { userId => complete(components.userDao.updateUserImage(userId, update.encodedImage)) }
     }
   }
 
-  val userRoutes: Route = changeImageRoute
+  private val userInfoRoute: Route = {
+    (path("user" / IntNumber) & get) { userId =>
+      complete(components.userDao.getUserById(userId).map(_.map(_.toResponse)))
+    }
+  }
+
+  val userRoutes: Route = changeImageRoute ~ userInfoRoute
 }

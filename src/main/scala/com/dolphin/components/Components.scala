@@ -10,7 +10,7 @@ import slick.jdbc.JdbcBackend.Database
 
 import scala.concurrent.ExecutionContext
 
-trait Components {
+trait Components extends ContextProvider {
   def components: ComponentsHolder
 }
 
