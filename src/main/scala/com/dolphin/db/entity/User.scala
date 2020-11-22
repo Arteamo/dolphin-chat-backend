@@ -11,7 +11,8 @@ case class User(
   username: String,
   passwordHash: String,
   email: String,
-  createdTimestamp: Timestamp = new Timestamp(System.currentTimeMillis())
+  createdTimestamp: Timestamp = new Timestamp(System.currentTimeMillis()),
+  encodedImage: Option[String] = None
 ) {
   def toResponse: UserJsonResponse = UserJsonResponse(username, email)
 }
@@ -19,7 +20,7 @@ case class User(
 class UserTable(tag: Tag) extends Table[User](tag, "users") {
 
   override def * : ProvenShape[User] =
-    (id.?, username, passwordHash, email, createdTimestamp) <> (User.tupled, User.unapply)
+    (id.?, username, passwordHash, email, createdTimestamp, encodedImage.?) <> (User.tupled, User.unapply)
 
   def id: Rep[Int] = column[Int]("id", O.PrimaryKey, O.AutoInc)
 
@@ -30,6 +31,8 @@ class UserTable(tag: Tag) extends Table[User](tag, "users") {
   def email: Rep[String] = column[String]("email")
 
   def createdTimestamp: Rep[Timestamp] = column[Timestamp]("created_timestamp")
+
+  def encodedImage: Rep[String] = column[String]("encoded_image")
 }
 
 object UserTable {

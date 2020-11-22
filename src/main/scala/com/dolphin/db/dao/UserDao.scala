@@ -16,6 +16,8 @@ trait UserDao {
   def getByToken(token: String): Future[Option[User]]
 
   def getUserById(id: Int): Future[Option[User]]
+
+  def updateUserImage(userId: Int, encodedImage: String): Future[Int]
 }
 
 class UserDaoImpl(db: Database)(implicit ec: ExecutionContext) extends UserDao {
@@ -39,5 +41,10 @@ class UserDaoImpl(db: Database)(implicit ec: ExecutionContext) extends UserDao {
   override def getUserById(id: Int): Future[Option[User]] = {
     val query = UserTable.filter(_.id === id)
     db.run(query.result.headOption)
+  }
+
+  override def updateUserImage(userId: Int, encodedImage: String): Future[Int] = {
+    val query = UserTable.filter(_.id === userId).map(_.encodedImage).update(encodedImage)
+    db.run(query)
   }
 }
