@@ -35,12 +35,18 @@ class UserToRoomDaoImpl(db: Database)(implicit ec: ExecutionContext) extends Use
   }
 
   override def listRoomsByUserId(userId: Int): Future[Seq[Room]] = {
-    val query = UserToRoomTable joinLeft RoomTable on (_.roomId === _.id) joinLeft UserTable on (_._1.userId === _.id)
-    db.run(query.result).map(_.flatMap(_._1._2))
+    val query =
+      UserToRoomTable.filter(_.userId === userId) joinLeft
+        RoomTable on (_.roomId === _.id) joinLeft
+        UserTable on (_._1.userId === _.id)
+    db.run(query.result).map(_.flatMap(_._1._2).distinct)
   }
 
   override def listUsersByRoomId(roomId: Int): Future[Seq[UserJsonResponse]] = {
-    val query = UserToRoomTable joinLeft UserTable on (_.userId === _.id) joinLeft RoomTable on (_._1.roomId === _.id)
+    val query =
+      UserToRoomTable.filter(_.roomId === roomId) joinLeft
+        UserTable on (_.userId === _.id) joinLeft
+        RoomTable on (_._1.roomId === _.id)
     db.run(query.result).map(_.flatMap(_._1._2.map(_.toResponse)).distinct)
 
   }
