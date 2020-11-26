@@ -8,6 +8,7 @@ import scala.concurrent.{ExecutionContext, Future}
 import scala.util.hashing.MurmurHash3
 
 class AuthService(userDao: UserDao, tokenDao: TokenDao)(implicit ec: ExecutionContext) {
+  import AuthService._
 
   def createUser(userJson: UserJson): Future[String] = {
     userDao.create(
@@ -39,9 +40,15 @@ class AuthService(userDao: UserDao, tokenDao: TokenDao)(implicit ec: ExecutionCo
   def logout(userId: Int): Future[(String, Int)] = {
     tokenDao.deleteByUserId(userId).map("status" -> _)
   }
+}
 
-  private def hashForPassword(userJson: UserJson): String = {
-    MurmurHash3.stringHash(userJson.password).toString
+object AuthService {
+
+  def hashForPassword(userJson: UserJson): String = {
+    hashForPassword(userJson.password)
   }
 
+  def hashForPassword(password: String): String = {
+    MurmurHash3.stringHash(password).toString
+  }
 }

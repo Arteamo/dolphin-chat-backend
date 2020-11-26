@@ -1,5 +1,7 @@
 package com.dolphin.db.dao
 
+import com.dolphin.api.entity.{ImageUpdate, UserUpdate}
+import com.dolphin.components.auth.AuthService
 import com.dolphin.db.entity.TokenTable.TokenTable
 import com.dolphin.db.entity.User
 import com.dolphin.db.entity.UserTable.UserTable
@@ -17,7 +19,7 @@ trait UserDao {
 
   def getUserById(id: Int): Future[Option[User]]
 
-  def updateUserImage(userId: Int, encodedImage: String): Future[Int]
+  def userUpdate(userId: Int, update: UserUpdate): Future[Int]
 }
 
 class UserDaoImpl(db: Database)(implicit ec: ExecutionContext) extends UserDao {
@@ -43,8 +45,24 @@ class UserDaoImpl(db: Database)(implicit ec: ExecutionContext) extends UserDao {
     db.run(query.result.headOption)
   }
 
-  override def updateUserImage(userId: Int, encodedImage: String): Future[Int] = {
-    val query = UserTable.filter(_.id === userId).map(_.encodedImage).update(encodedImage)
-    db.run(query.transactionally)
+  override def userUpdate(userId: Int, update: UserUpdate): Future[Int] = {
+    val query = UserTable
+      .filter(_.id === userId)
+      .map(u => (u.username, u.passwordHash, u.encodedImage))
+
+    getUserById(userId).flatMap { userOpt =>
+      val user = userOpt.getOrElse(throw new RuntimeException(s"Cannot update user $userId"))
+
+      val queryWithUpdate = query
+        .update(
+          (
+            update.username.getOrElse(user.username),
+            update.password.map(AuthService.hashForPassword).getOrElse(user.passwordHash),
+            update.image.collect { case ImageUpdate(enc, false) => enc }.orElse(user.encodedImage).orNull
+          )
+        )
+      db.run(queryWithUpdate)
+    }
+
   }
 }

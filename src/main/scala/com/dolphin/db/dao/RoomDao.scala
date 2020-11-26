@@ -1,5 +1,6 @@
 package com.dolphin.db.dao
 
+import com.dolphin.api.entity.ImageUpdate
 import com.dolphin.db.entity.Room
 import com.dolphin.db.entity.RoomTable.RoomTable
 import slick.jdbc.JdbcBackend.Database
@@ -16,7 +17,7 @@ trait RoomDao {
 
   def list(): Future[Seq[Room]]
 
-  def updateRoomImage(roomId: Int, encodedImage: String): Future[Int]
+  def updateRoomImage(roomId: Int, imageUpdate: ImageUpdate): Future[Int]
 }
 
 class RoomDaoImpl(db: Database)(implicit ec: ExecutionContext) extends RoomDao {
@@ -40,8 +41,11 @@ class RoomDaoImpl(db: Database)(implicit ec: ExecutionContext) extends RoomDao {
     db.run(RoomTable.result)
   }
 
-  override def updateRoomImage(roomId: Int, encodedImage: String): Future[Int] = {
-    val query = RoomTable.filter(_.id === roomId).map(_.encodedImage).update(encodedImage)
+  override def updateRoomImage(roomId: Int, imageUpdate: ImageUpdate): Future[Int] = {
+    val query = RoomTable
+      .filter(_.id === roomId)
+      .map(_.encodedImage)
+      .update(Option(imageUpdate.encodedImage).filterNot(_ => imageUpdate.setDefaultImage).orNull)
     db.run(query.transactionally)
   }
 }
