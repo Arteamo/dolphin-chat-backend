@@ -84,3 +84,11 @@ Authorization: Bearer 457370b2-2320-45c6-94af-99df3b9d452c
 ###
 
 GET http://localhost:9000/user/1
+
+###
+
+POST http://localhost:9000/user/update
+Content-Type: application/json
+Authorization: Bearer 457370b2-2320-45c6-94af-99df3b9d452c
+
+{}
