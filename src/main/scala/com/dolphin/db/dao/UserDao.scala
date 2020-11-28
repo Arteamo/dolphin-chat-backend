@@ -58,7 +58,11 @@ class UserDaoImpl(db: Database)(implicit ec: ExecutionContext) extends UserDao {
           (
             update.username.getOrElse(user.username),
             update.password.map(AuthService.hashForPassword).getOrElse(user.passwordHash),
-            update.image.collect { case ImageUpdate(enc, false) => enc }.orElse(user.encodedImage).orNull
+            update.image match {
+              case Some(ImageUpdate(Some(encImage), false)) => encImage
+              case Some(ImageUpdate(_, true)) => null
+              case _ => user.encodedImage.orNull
+            }
           )
         )
       db.run(queryWithUpdate)

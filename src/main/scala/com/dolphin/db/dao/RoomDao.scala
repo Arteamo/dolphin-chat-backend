@@ -45,7 +45,10 @@ class RoomDaoImpl(db: Database)(implicit ec: ExecutionContext) extends RoomDao {
     val query = RoomTable
       .filter(_.id === roomId)
       .map(_.encodedImage)
-      .update(Option(imageUpdate.encodedImage).filterNot(_ => imageUpdate.setDefaultImage).orNull)
+      .update(imageUpdate match {
+        case ImageUpdate(Some(encImage), false) => encImage
+        case ImageUpdate(_, true) => null
+      })
     db.run(query.transactionally)
   }
 }
