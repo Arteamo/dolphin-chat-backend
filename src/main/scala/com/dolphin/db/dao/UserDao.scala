@@ -48,7 +48,7 @@ class UserDaoImpl(db: Database)(implicit ec: ExecutionContext) extends UserDao {
   override def userUpdate(userId: Int, update: UserUpdate): Future[Int] = {
     val query = UserTable
       .filter(_.id === userId)
-      .map(u => (u.username, u.passwordHash, u.encodedImage))
+      .map(u => (u.email, u.username, u.passwordHash, u.encodedImage))
 
     getUserById(userId).flatMap { userOpt =>
       val user = userOpt.getOrElse(throw new RuntimeException(s"Cannot update user $userId"))
@@ -56,6 +56,7 @@ class UserDaoImpl(db: Database)(implicit ec: ExecutionContext) extends UserDao {
       val queryWithUpdate = query
         .update(
           (
+            update.email.getOrElse(user.email),
             update.username.getOrElse(user.username),
             update.password.map(AuthService.hashForPassword).getOrElse(user.passwordHash),
             update.image match {

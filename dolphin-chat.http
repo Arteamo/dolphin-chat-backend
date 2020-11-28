@@ -95,6 +95,7 @@ Authorization: Bearer 457370b2-2320-45c6-94af-99df3b9d452c
 {
   "username": "newName",
   "password": "newPassword",
+  "email": "newEmail",
   "image": {
     "encodedImage": "base64 string",
     "setDefaultImage": false
