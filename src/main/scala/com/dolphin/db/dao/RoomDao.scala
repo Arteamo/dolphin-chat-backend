@@ -18,6 +18,8 @@ trait RoomDao {
   def list(): Future[Seq[Room]]
 
   def updateRoomImage(roomId: Int, imageUpdate: ImageUpdate): Future[Int]
+
+  def updateRoomTitle(roomId: Int, title: String): Future[Int]
 }
 
 class RoomDaoImpl(db: Database)(implicit ec: ExecutionContext) extends RoomDao {
@@ -49,6 +51,11 @@ class RoomDaoImpl(db: Database)(implicit ec: ExecutionContext) extends RoomDao {
         case ImageUpdate(Some(encImage), false) => encImage
         case ImageUpdate(_, true) => null
       })
+    db.run(query.transactionally)
+  }
+
+  override def updateRoomTitle(roomId: Int, title: String): Future[Int] = {
+    val query = RoomTable.filter(_.id === roomId).map(_.title).update(title)
     db.run(query.transactionally)
   }
 }
