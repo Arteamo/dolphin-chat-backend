@@ -43,7 +43,7 @@ trait RoomRoutes extends CommonDirectives {
   }
 
   private val updateRoomTitle: Route = {
-    (path("rooms" / "image" / IntNumber) & post & parameter("title")) { (roomId, title) =>
+    (path("rooms" / "title" / IntNumber) & post & parameter("title")) { (roomId, title) =>
       complete(components.roomDao.updateRoomTitle(roomId, title))
     }
   }
