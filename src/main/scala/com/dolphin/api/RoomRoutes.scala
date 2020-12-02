@@ -7,7 +7,7 @@ import com.dolphin.api.entity.ImageUpdate
 import com.dolphin.api.entity.RoomJson._
 import com.dolphin.components.Components
 import com.dolphin.db.entity.UserToRoom._
-import de.heikoseeberger.akkahttpcirce.FailFastCirceSupport._
+import de.heikoseeberger.akkahttpcirce.FailFastCirceSupport.{marshaller, unmarshaller}
 
 trait RoomRoutes extends CommonDirectives {
   this: Components =>
@@ -42,5 +42,12 @@ trait RoomRoutes extends CommonDirectives {
     }
   }
 
-  val roomRoutes: Route = listUserRoomsRoute ~ listUsersInRoomRoute ~ joinRoomRoute ~ leaveRoomRoute ~ updateRoomImage
+  private val updateRoomTitle: Route = {
+    (path("rooms" / "image" / IntNumber) & post & parameter("title")) { (roomId, title) =>
+      complete(components.roomDao.updateRoomTitle(roomId, title))
+    }
+  }
+
+  val roomRoutes: Route =
+    listUserRoomsRoute ~ listUsersInRoomRoute ~ joinRoomRoute ~ leaveRoomRoute ~ updateRoomImage ~ updateRoomTitle
 }
