@@ -9,6 +9,8 @@ import com.dolphin.components.Components
 import com.dolphin.db.entity.UserToRoom._
 import de.heikoseeberger.akkahttpcirce.FailFastCirceSupport.{marshaller, unmarshaller}
 
+import scala.util.Try
+
 trait RoomRoutes extends CommonDirectives {
   this: Components =>
 
@@ -36,18 +38,30 @@ trait RoomRoutes extends CommonDirectives {
     }
   }
 
-  private val updateRoomImage: Route = {
+  private val updateRoomImageRoute: Route = {
     (path("rooms" / "image" / IntNumber) & post & entity(as[ImageUpdate])) { (roomId, imageUpdate) =>
       complete(components.roomDao.updateRoomImage(roomId, imageUpdate))
     }
   }
 
-  private val updateRoomTitle: Route = {
+  private val updateRoomTitleRoute: Route = {
     (path("rooms" / "title" / IntNumber) & post & parameter("title")) { (roomId, title) =>
       complete(components.roomDao.updateRoomTitle(roomId, title))
     }
   }
 
+  private val listMessageWithPaginationRoute: Route = {
+    (path("room" / IntNumber / "messages") & get & parameter("page")) { (roomId, page) =>
+      complete(components.messageDao.listMessagesWithPagination(roomId, Try(page.toInt).getOrElse(1)))
+    }
+  }
+
   val roomRoutes: Route =
-    listUserRoomsRoute ~ listUsersInRoomRoute ~ joinRoomRoute ~ leaveRoomRoute ~ updateRoomImage ~ updateRoomTitle
+    listUserRoomsRoute ~
+      listUsersInRoomRoute ~
+      joinRoomRoute ~
+      leaveRoomRoute ~
+      updateRoomImageRoute ~
+      updateRoomTitleRoute ~
+      listMessageWithPaginationRoute
 }
