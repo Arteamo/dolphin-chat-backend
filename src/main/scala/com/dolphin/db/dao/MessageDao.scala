@@ -1,5 +1,6 @@
 package com.dolphin.db.dao
 
+import com.dolphin.api.entity.MessageJson
 import com.dolphin.db.entity.{Message, User}
 import com.dolphin.db.entity.MessageTable.MessageTable
 import com.dolphin.db.entity.UserTable.UserTable
@@ -12,7 +13,7 @@ trait MessageDao {
 
   def lastMessage(roomId: Int): Future[Option[(Message, Option[User])]]
 
-  def listMessagesWithPagination(roomId: Int, page: Int): Future[Seq[Message]]
+  def listMessagesWithPagination(roomId: Int, page: Int): Future[Seq[MessageJson]]
 }
 
 class MessageDaoImpl(db: Database)(implicit ec: ExecutionContext) extends MessageDao {
@@ -39,9 +40,9 @@ class MessageDaoImpl(db: Database)(implicit ec: ExecutionContext) extends Messag
       )
   }
 
-  override def listMessagesWithPagination(roomId: Int, page: Int): Future[Seq[Message]] = {
+  override def listMessagesWithPagination(roomId: Int, page: Int): Future[Seq[MessageJson]] = {
     val query = MessageTable.filter(_.roomId === roomId).drop((page - 1) * PageSize).take(PageSize)
-    db.run(query.result)
+    db.run(query.result).map(_.map(_.toMessageJson))
   }
 }
 

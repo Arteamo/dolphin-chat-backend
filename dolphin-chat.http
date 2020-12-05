@@ -115,3 +115,7 @@ Content-Type: application/json
 ###
 
 POST http://localhost:9000/room/title/5?title=newTitle
+
+###
+
+GET http://localhost:9000/room/5/messages?page=1
