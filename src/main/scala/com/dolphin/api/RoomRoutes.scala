@@ -56,6 +56,12 @@ trait RoomRoutes extends CommonDirectives {
     }
   }
 
+  private val countUsersRoute: Route = {
+    (path("room" / IntNumber / "count") & get) { roomId =>
+      complete(components.userToRoomDao.countUsersByRoomId(roomId))
+    }
+  }
+
   val roomRoutes: Route =
     listUserRoomsRoute ~
       listUsersInRoomRoute ~
@@ -63,5 +69,6 @@ trait RoomRoutes extends CommonDirectives {
       leaveRoomRoute ~
       updateRoomImageRoute ~
       updateRoomTitleRoute ~
-      listMessageWithPaginationRoute
+      listMessageWithPaginationRoute ~
+      countUsersRoute
 }

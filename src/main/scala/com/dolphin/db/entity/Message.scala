@@ -16,7 +16,8 @@ case class Message(
   encodedData: Option[String] = None
 ) {
 
-  def toMessageJson: MessageJson = MessageJson(messageText, messageType, sendTimestamp.getTime, encodedData)
+  def toMessageJson: MessageJson =
+    MessageJson(messageText, messageType, sendTimestamp.getTime, encodedData, Some(senderId))
 }
 
 class MessageTable(tag: Tag) extends Table[Message](tag, "messages") {
