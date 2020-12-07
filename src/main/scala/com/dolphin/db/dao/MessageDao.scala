@@ -16,8 +16,7 @@ trait MessageDao {
   def listMessagesWithPagination(roomId: Int, page: Int): Future[Seq[MessageJson]]
 }
 
-class MessageDaoImpl(db: Database)(implicit ec: ExecutionContext) extends MessageDao {
-  import MessageDaoImpl.PageSize
+class MessageDaoImpl(db: Database, pageSize: Int)(implicit ec: ExecutionContext) extends MessageDao {
 
   override def create(message: Message): Future[Int] = {
     val query = MessageTable += message
@@ -41,11 +40,7 @@ class MessageDaoImpl(db: Database)(implicit ec: ExecutionContext) extends Messag
   }
 
   override def listMessagesWithPagination(roomId: Int, page: Int): Future[Seq[MessageJson]] = {
-    val query = MessageTable.filter(_.roomId === roomId).drop((page - 1) * PageSize).take(PageSize)
+    val query = MessageTable.filter(_.roomId === roomId).drop((page - 1) * pageSize).take(pageSize)
     db.run(query.result).map(_.map(_.toMessageJson))
   }
-}
-
-object MessageDaoImpl {
-  val PageSize: Int = 100
 }

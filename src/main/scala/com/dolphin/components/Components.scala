@@ -5,6 +5,7 @@ import com.dolphin.components.auth.AuthService
 import com.dolphin.components.room.RoomService
 import com.dolphin.db.dao._
 import com.dolphin.utils.EnvUtils
+import com.typesafe.config.Config
 import org.postgresql.Driver
 import slick.jdbc.JdbcBackend.Database
 
@@ -16,6 +17,7 @@ trait Components extends ContextProvider {
 
 case class ComponentsHolder(
   actorSystem: ActorSystem,
+  config: Config,
   userDao: UserDao,
   tokenDao: TokenDao,
   roomDao: RoomDao,
@@ -40,15 +42,16 @@ object ComponentsHolder {
     }
   }
 
-  def create(system: ActorSystem)(implicit ec: ExecutionContext): ComponentsHolder = {
+  def create(system: ActorSystem, config: Config)(implicit ec: ExecutionContext): ComponentsHolder = {
     val db = getDb
     val userDao = new UserDaoImpl(db)
     val tokenDao = new TokenDaoImpl(db)
     val roomDao = new RoomDaoImpl(db)
-    val messageDao = new MessageDaoImpl(db)
+    val messageDao = new MessageDaoImpl(db, config.getInt("app.pagination.pageSize"))
     val userToRoomDao = new UserToRoomDaoImpl(db)
     ComponentsHolder(
       system,
+      config,
       userDao,
       tokenDao,
       roomDao,

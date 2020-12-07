@@ -17,7 +17,7 @@ object Main extends App with Components with Routes with Logging {
   val host = config.getString("http.host")
   val port = config.getInt("http.port")
 
-  override lazy val components = ComponentsHolder.create(system)
+  override lazy val components = ComponentsHolder.create(system, config)
 
   Http().newServerAt(host, port).bind(routes)
   log.info(s"Application started on http://$host:$port")
