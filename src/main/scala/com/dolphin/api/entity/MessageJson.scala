@@ -7,6 +7,7 @@ import io.circe.{Decoder, Encoder}
 import io.circe.generic.semiauto.{deriveDecoder, deriveEncoder}
 
 final case class MessageJson(
+  id: Option[Int] = None,
   text: String,
   messageType: String,
   sendTimestamp: Long,
