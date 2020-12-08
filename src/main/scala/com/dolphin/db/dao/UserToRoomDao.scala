@@ -1,6 +1,6 @@
 package com.dolphin.db.dao
 
-import com.dolphin.api.entity.UserJsonResponse
+import com.dolphin.api.entity.{RoomUserCountJson, UserJsonResponse}
 import com.dolphin.db.entity.RoomTable.RoomTable
 import com.dolphin.db.entity.UserTable.UserTable
 import com.dolphin.db.entity.UserToRoomTable.UserToRoomTable
@@ -19,6 +19,8 @@ trait UserToRoomDao {
   def listUsersByRoomId(roomId: Int): Future[Seq[UserJsonResponse]]
 
   def listRoomsByUserId(userId: Int): Future[Seq[Room]]
+
+  def countUsersByRoomId(roomId: Int): Future[RoomUserCountJson]
 }
 
 class UserToRoomDaoImpl(db: Database)(implicit ec: ExecutionContext) extends UserToRoomDao {
@@ -48,6 +50,10 @@ class UserToRoomDaoImpl(db: Database)(implicit ec: ExecutionContext) extends Use
         UserTable on (_.userId === _.id) joinLeft
         RoomTable on (_._1.roomId === _.id)
     db.run(query.result).map(_.flatMap(_._1._2.map(_.toResponse)).distinct)
+  }
 
+  override def countUsersByRoomId(roomId: Int): Future[RoomUserCountJson] = {
+    val query = UserToRoomTable.filter(_.roomId === roomId)
+    db.run(query.result).map(rel => RoomUserCountJson(roomId, rel.length))
   }
 }

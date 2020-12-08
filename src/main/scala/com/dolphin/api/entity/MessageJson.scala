@@ -11,7 +11,8 @@ final case class MessageJson(
   text: String,
   messageType: String,
   sendTimestamp: Long,
-  encodedData: Option[String] = None
+  encodedData: Option[String] = None,
+  senderId: Option[Int] = None
 ) {
 
   def toMessage(senderId: Int, roomId: Int): Message = {
