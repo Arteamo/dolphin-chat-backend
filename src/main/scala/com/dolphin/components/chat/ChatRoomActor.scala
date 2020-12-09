@@ -6,7 +6,9 @@ import com.dolphin.api.entity.MessageJson._
 import com.dolphin.components.ComponentsHolder
 import com.dolphin.components.chat.ChatMessages.{UserJoined, UserLeft, UserSaid}
 import com.dolphin.utils.Logging
+import io.circe.Printer
 import io.circe.parser._
+import io.circe.syntax._
 
 import scala.collection.mutable
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -27,15 +29,16 @@ class ChatRoomActor(roomId: Int)(components: ComponentsHolder) extends Actor wit
         case Left(e) =>
           log.error(s"Error during parsing message in $roomId for $userId", e)
         case Right(v) =>
-          components.messageDao.create(v.toMessage(senderId = userId, roomId = roomId))
-            .map(_ => broadcast(msg))
+          components.messageDao
+            .create(v.toMessage(senderId = userId, roomId = roomId))
+            .map(insertedMessage => broadcast(v.copy(id = insertedMessage.id)))
             .recover {
-            case e: Exception => log.error("Error during message transmission", e)
-          }
+              case e: Exception => log.error("Error during message transmission", e)
+            }
       }
   }
 
-  def broadcast(msg: String): Unit = {
-    users.values.foreach(_ ! msg)
+  def broadcast(msg: MessageJson): Unit = {
+    users.values.foreach(_ ! msg.asJson.printWith(Printer.spaces2.copy(dropNullValues = true)))
   }
 }
