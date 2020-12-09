@@ -9,7 +9,7 @@ import slick.jdbc.PostgresProfile.api._
 import scala.concurrent.{ExecutionContext, Future}
 
 trait MessageDao {
-  def create(message: Message): Future[Int]
+  def create(message: Message): Future[Message]
 
   def lastMessage(roomId: Int): Future[Option[(Message, Option[User])]]
 
@@ -18,8 +18,8 @@ trait MessageDao {
 
 class MessageDaoImpl(db: Database, pageSize: Int)(implicit ec: ExecutionContext) extends MessageDao {
 
-  override def create(message: Message): Future[Int] = {
-    val query = MessageTable += message
+  override def create(message: Message): Future[Message] = {
+    val query = MessageTable returning MessageTable.map(_.id) into ((msg, msgId) => msg.copy(id = Some(msgId))) += message
     db.run(query.transactionally)
   }
 
